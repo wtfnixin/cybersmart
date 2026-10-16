@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Doppelgänger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ECEEF1;--surface:#FBFBFC;--ink:#18212B;--muted:#5A6572;--line:#D3D8DE;--bad:#A8321F;--badtint:#F3DDD8;--mid:#8A6516;--good:#2D6A57;--goodtint:#DCEBE5;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181D;--surface:#1B2027;--ink:#E6E9ED;--muted:#98A2AE;--line:#2C333C;--bad:#E27D68;--badtint:#3A2420;--mid:#D2A64A;--good:#6FB59C;--goodtint:#1F332D;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14181D;--surface:#1B2027;--ink:#E6E9ED;--muted:#98A2AE;--line:#2C333C;--bad:#E27D68;--badtint:#3A2420;--mid:#D2A64A;--good:#6FB59C;--goodtint:#1F332D;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 64px}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.1;margin:0 0 8px;font-weight:700;letter-spacing:-.02em}
+h2{font-size:18px;margin:0 0 4px;font-weight:600}
+p{margin:0}
+.lede{color:var(--muted);max-width:60ch}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 20px;align-items:center}
+button{font:inherit;color:inherit;cursor:pointer}
+.tab{border:1px solid var(--line);background:transparent;padding:8px 14px;border-radius:8px;transition:background .2s,border-color .2s}
+.tab:hover{background:var(--surface)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-weight:500}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:hover{opacity:.88}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+.sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+.post{white-space:pre-wrap;padding:14px 0;border-top:1px solid var(--line)}
+.post:first-of-type{border-top:0;padding-top:0}
+.post small{display:block;color:var(--muted);font-size:13px;margin-bottom:2px}
+mark{background:linear-gradient(var(--badtint),var(--badtint)) no-repeat left/100% 100%;color:inherit;box-shadow:inset 0 -2px var(--bad);padding:0 2px;border-radius:2px;transition:color .4s;cursor:default}
+mark.sweep{animation:wipe .6s cubic-bezier(.3,.7,.2,1) both}
+mark.gone{background:linear-gradient(var(--ink),var(--ink)) no-repeat left/100% 100%;color:transparent;box-shadow:none;user-select:none;animation:wipe .5s cubic-bezier(.3,.7,.2,1) both}
+@keyframes wipe{from{background-size:0 100%;box-shadow:inset 0 0 0 var(--bad)}}
+mark.hl,.row.hl,.pin.hl{outline:2px solid var(--bad);outline-offset:1px}
+.score{display:flex;align-items:center;gap:18px;margin-bottom:16px}
+.ringbox{position:relative;width:128px;height:128px;flex:none}
+.ring{width:100%;height:100%;transform:rotate(-90deg)}
+.rt{fill:none;stroke:var(--line);stroke-width:8}
+.rf{fill:none;stroke:var(--bad);stroke-width:8;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset .9s cubic-bezier(.3,.7,.2,1),stroke .4s}
+.num{position:absolute;inset:0;display:grid;place-items:center;font-size:40px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.band{font-weight:600;font-size:20px}
+.row{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line);border-radius:4px}
+.row dt{color:var(--muted);font-size:14px}
+.row dd{margin:0;overflow-wrap:anywhere}
+.row.off dd{color:var(--muted)}
+.row.enter{animation:in .5s both}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+dl{margin:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.mail{border:1px solid var(--line);border-radius:8px;padding:14px;font-size:15px}
+.mail .mh{color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px;overflow-wrap:anywhere}
+.mail p+p{margin-top:10px}
+.mail .ln{animation:in .4s both}
+.note{color:var(--muted);font-size:14px;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{text-align:left;padding:9px 8px 9px 0;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500;font-size:14px;border-top:0}
+.chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:13px;font-weight:600;background:var(--badtint);color:var(--bad);white-space:nowrap}
+.chip.ok{background:var(--goodtint);color:var(--good)}
+.sw{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:12px 0;background:none;border:0;border-top:1px solid var(--line)}
+.sw:first-of-type{border-top:0}
+.knob{width:44px;height:26px;border-radius:13px;background:var(--line);position:relative;transition:background .25s}
+.knob::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--surface);transition:transform .25s cubic-bezier(.3,.7,.2,1)}
+.sw[aria-checked="true"] .  knob{background:var(--good)}
+.sw[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.sw b{display:block;font-weight:600}
+.sw span.h{color:var(--muted);font-size:14px}
+.pts{font-variant-numeric:tabular-nums;font-weight:600;color:var(--good)}
+.acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+details{border-top:1px solid var(--line);padding:12px 0 0;margin-top:14px}
+summary{cursor:pointer;font-weight:600}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);border-radius:8px;padding:12px;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:10px 0 0;max-height:240px;overflow:auto}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);width:min(560px,92vw);padding:20px}
+dialog::backdrop{background:rgba(10,14,18,.5)}
+textarea{width:100%;min-height:150px;font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px;margin:12px 0;resize:vertical}
+.msg{color:var(--muted);font-size:14px;min-height:20px}
+[hidden]{display:none!important}
+.row.flip{animation:in .45s both}
+.fadein{animation:in .35s both}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);position:relative;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:14px}
+.seg .thumb{position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/3);background:var(--surface);border:1px solid var(--line);border-radius:8px;transition:transform .4s cubic-bezier(.3,.7,.2,1)}
+.seg[data-i="1"] .thumb{transform:translateX(100%)}.seg[data-i="2"] .thumb{transform:translateX(200%)}
+.sg{position:relative;background:none;border:0;padding:8px 6px;border-radius:8px;font-size:14px;color:var(--muted);transition:color .2s}
+.sg[aria-selected="true"]{color:var(--ink);font-weight:600}
+.shot{position:relative;margin:0 0 12px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.shot img{display:block;width:100%;height:auto}
+.pins{position:absolute;inset:0}
+.pin{position:absolute;border:2px solid var(--bad);background:transparent;border-radius:4px;padding:0;transition:background .45s,border-color .45s;animation:in .5s both}
+.pin i{position:absolute;top:2px;left:2px;min-width:20px;height:20px;border-radius:10px;background:var(--bad);color:var(--surface);font-size:12px;font-weight:600;line-height:20px;font-style:normal;text-align:center;padding:0 5px}
+.pin.gone{background:var(--ink);border-color:var(--ink)}.pin.gone i{background:var(--surface);color:var(--ink)}
+.drop{display:block;border:1.5px dashed var(--line);border-radius:10px;padding:30px 16px;text-align:center;cursor:pointer;margin:14px 0;transition:border-color .2s,background .2s}
+.drop:hover,.drop.over{border-color:var(--ink);background:var(--bg)}
+.drop b{display:block}.drop span{color:var(--muted);font-size:14px}
+.prog{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin:18px 0 10px;position:relative}
+.prog i{position:absolute;top:0;bottom:0;width:35%;background:var(--ink);border-radius:2px;animation:slide 1.2s ease-in-out infinite}
+@keyframes slide{from{left:-35%}to{left:100%}}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.01em;margin-bottom:48px}
+.brand .c2{animation:slidein 1s .2s cubic-bezier(.2,.8,.2,1) both}
+@keyframes slidein{from{transform:translateX(-10px);opacity:0}}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;padding-bottom:40px}
+@media(max-width:860px){.hero{grid-template-columns:1fr;gap:32px}.steps{grid-template-columns:1fr!important}}
+.hero h2{font-size:clamp(40px,7vw,76px);line-height:1;letter-spacing:-.04em;margin:0 0 20px;font-weight:700}
+.hero h2 span{display:block;overflow:hidden;padding-bottom:.08em}
+.hero h2 i{display:block;font-style:normal;animation:rise .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{transform:translateY(105%)}}
+.fa{animation:in .8s cubic-bezier(.2,.8,.2,1) both}
+.hero .lede{font-size:18px;margin-bottom:22px}
+.demo{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.demo small{color:var(--muted);font-size:13px}
+.dp{font-size:19px;line-height:1.5;margin:10px 0 18px}
+@property --n{syntax:'<integer>';inherits:true;initial-value:0}
+.dm{background:linear-gradient(var(--ink),var(--ink)) no-repeat left/0 100%,linear-gradient(var(--badtint),var(--badtint)) no-repeat left/0 100%;box-shadow:inset 0 -2px var(--bad);padding:0 3px;border-radius:2px;animation:dm 10s infinite both}
+@keyframes dm{0%{background-size:0 100%,0 100%;color:var(--ink)}10%,58%{background-size:0 100%,100% 100%;color:var(--ink)}68%,92%{background-size:100% 100%,100% 100%;color:transparent;box-shadow:inset 0 0 0 transparent}100%{background-size:0 100%,0 100%;color:var(--ink)}}
+.dr{display:grid;border-top:1px solid var(--line);padding:10px 0;opacity:0;animation:dr 10s infinite both}
+.dr b{font-weight:600}.dr span{color:var(--muted);font-size:14px}
+@keyframes dr{0%,12%{opacity:0;transform:translateY(8px)}20%,58%{opacity:1;transform:none}70%,92%{opacity:.35}100%{opacity:0}}
+.dscore{display:flex;align-items:center;gap:14px;border-top:1px solid var(--line);padding-top:14px;animation:dn 10s infinite both}
+@keyframes dn{0%{--n:0}18%,58%{--n:88}72%,92%{--n:14}100%{--n:0}}
+.dn{counter-reset:n var(--n);font-size:36px;font-weight:700;line-height:1;min-width:2ch;font-variant-numeric:tabular-nums}
+.dn::after{content:counter(n)}
+.dbar{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.dbar i{display:block;height:100%;width:calc(var(--n)*1%);background:var(--bad);animation:dcol 10s infinite both}
+@keyframes dcol{0%,58%{background:var(--bad)}72%,92%{background:var(--good)}100%{background:var(--bad)}}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0 28px}
+.st{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+.st b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:14px;margin-bottom:12px}
+.st h3{margin:0 0 6px;font-size:17px}.st p{color:var(--muted);font-size:15px}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.dr{opacity:1}.dm{background-size:0 100%,100% 100%}.dscore{--n:88}}
+@media print{.bar,.tabs,.acts,button{display:none!important}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="top" hidden><h1>Doppelgänger</h1>
+  <p class="lede">Ordinary public posts add up. See the profile an attacker can assemble about a person, the message they could send, and what changes when each detail is removed.</p></div>
+
+  <div class="bar" id="picker" role="tablist" aria-label="Choose a profile"></div>
+
+  <section id="empty">
+  <div class="brand"><svg width="30" height="20" viewBox="0 0 30 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/><circle class="c2" cx="20" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>Doppelgänger</div>
+  <div class="hero">
+    <div>
+      <h2><span><i>Your posts</i></span><span><i style="animation-delay:.12s">say more</i></span><span><i style="animation-delay:.24s">than you think.</i></span></h2>
+      <p class="lede fa" style="animation-delay:.6s">Photos and captions leak small details that add up. Scan what you plan to post and see the profile an attacker could build, the message they could send, and how much safer you get as each detail comes out.</p>
+      <div class="acts fa" style="animation-delay:.8s"><button class="btn" id="photo">Scan your photo</button><button class="btn ghost" id="open">Scan your own text</button></div>
+      <p class="note fa" style="animation-delay:1s">This page does not save your photo or text.</p>
+    </div>
+    <div class="demo fa" style="animation-delay:.5s" role="img" aria-label="Animated example: two details in a post are highlighted, turned into attacker notes, then removed as the risk score falls from 88 to 14.">
+      <small>Example scan</small>
+      <p class="dp">Boarding at <span class="dm">gate 22, back Thursday</span>. Already missing <span class="dm" style="animation-delay:.4s">Biscuit</span>.</p>
+      <div class="dr" style="animation-delay:.3s"><b>Away until Thursday</b><span>Shows when you cannot be reached</span></div>
+      <div class="dr" style="animation-delay:.6s"><b>First pet: Biscuit</b><span>A common bank recovery answer</span></div>
+      <div class="dscore"><span class="dn"></span><div class="dbar"><i></i></div></div>
+    </div>
+  </div>
+  <div class="steps">
+    <div class="st rv"><b>1</b><h3>Add what you plan to post</h3><p>Pick a photo or paste a caption. A photo's hidden file data is read on your device.</p></div>
+    <div class="st rv" style="transition-delay:.12s"><b>2</b><h3>See what an attacker sees</h3><p>Each risky detail is marked, with the security question it answers and the message it enables.</p></div>
+    <div class="st rv" style="transition-delay:.24s"><b>3</b><h3>Remove it and watch the risk fall</h3><p>Turn on each fix, then copy the deletion letter or the audit.</p></div>
+  </div>
+  <p class="note rv" style="max-width:70ch">It looks for exact location and device data, readable badges and screens, names and handles, pet and school answers, travel dates and family names. A clean result means nothing obvious was found, not that you are safe.</p>
+</section>
+  <div id="app" hidden>
+  <div class="grid">
+    <section class="card" aria-labelledby="l1">
+      <h2 id="l1">What they posted</h2>
+      <p class="sub">Highlighted phrases are the ones an attacker keeps.</p>
+      <div id="posts"></div>
+    </section>
+    <section class="card" aria-labelledby="r1">
+      <h2 id="r1">What an attacker builds from it</h2>
+      <div class="score" aria-live="polite"><div class="ringbox"><svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="rt" cx="60" cy="60" r="52"/><circle class="rf" id="fill" cx="60" cy="60" r="52" pathLength="100"/></svg><span class="num" id="num">0</span></div><span><span class="band" id="band"></span><br><span class="sub" style="margin:0">Impersonation risk, out of 100</span></span></div>
+      <dl id="dossier"></dl>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="a1">
+      <h2 id="a1">Attack simulator</h2>
+      <p class="sub">Built only from details that are still public.</p>
+      <div class="seg" role="tablist" id="atabs" data-i="0"><i class="thumb"></i>
+        <button class="sg" role="tab" data-t="mail" aria-selected="true">Spear-phishing email</button>
+        <button class="sg" role="tab" data-t="qs" aria-selected="false">Security questions</button>
+        <button class="sg" role="tab" data-t="voice" aria-selected="false">Voice clone</button>
+      </div>
+      <div id="attack"></div>
+    </section>
+    <section class="card" aria-labelledby="g1">
+      <h2 id="g1">Remove details</h2>
+      <p class="sub">Turn on each fix and watch the risk fall. <b id="prg"></b></p>
+      <div id="ghost"></div>
+      <div class="acts">
+        <button class="btn" id="all">Fix everything</button>
+        <button class="btn ghost" id="reset">Start over</button>
+      </div>
+      <details><summary>Deletion request letter</summary><pre id="letter"></pre>
+        <div class="acts"><button class="btn ghost" data-copy="letter">Copy letter</button></div></details>
+      <details><summary>Privacy audit</summary><pre id="audit"></pre>
+        <div class="acts"><button class="btn ghost" data-copy="audit">Copy JSON</button><button class="btn ghost" onclick="window.print()">Print</button></div></details>
+      <p class="msg" id="msg" role="status"></p>
+    </section>
+  </div>
+  </div>
+</div>
+
+<dialog id="scan">
+  <h2>Scan your own text</h2>
+  <p class="sub" style="margin:4px 0 0">Paste a bio or a few posts. Nothing leaves this page.</p>
+  <textarea id="paste" aria-label="Text to scan">Flying out of Pune tomorrow, back on the 28th. My dog Mango turns 5 this week! Proud Delhi Public School alum. Reach me at sam.rao@gmail.com, or +91 98765 43210. Working at Quill Labs.</textarea>
+  <p class="msg" id="smsg"></p>
+  <div class="acts"><button class="btn" id="go">Scan text</button><button class="btn ghost" id="cancel">Cancel</button></div>
+</dialog>
+
+<dialog id="pdlg">
+  <h2>Scan a photo</h2>
+  <p class="sub" style="margin:4px 0 0">Pick a photo you plan to post. Hidden file data is read on this page. A resized copy is sent to Claude to look for details that give you away.</p>
+  <label class="drop" id="drop" for="file"><b>Choose an image</b><span>or drop it here. JPEG, PNG or WebP.</span></label>
+  <input type="file" id="file" accept="image/*" hidden>
+  <div class="prog" id="prog" hidden><i></i></div>
+  <p class="msg" id="pmsg" role="status"></p>
+  <div class="acts"><button class="btn ghost" id="pcancel">Cancel</button></div>
+</dialog>
+<script>
+const BASE=0;
+const P=[];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let cur=null,fixed=new Set(),tab='mail',shown=0,offPrev=new Set();
+const total=()=>BASE+cur.c.reduce((a,x)=>a+x.w,0);
+const score=()=>BASE+cur.c.reduce((a,x)=>a+(fixed.has(x.id)?0:x.w),0);
+
+function renderPicker(){
+ $('#picker').innerHTML=P.map(p=>`<button class="tab" role="tab" aria-selected="${p===cur}" data-p="${p.id}">${esc(p.name)}</button>`).join('')+
+ (P.length?`<button class="btn" id="photo">Scan your photo</button><button class="btn ghost" id="open">Scan your own text</button>`:'');
+}
+function renderPosts(enter){
+ if(cur.img)return renderPhoto();
+ $('#l1').textContent='What they posted';let n=0;
+ $('#posts').innerHTML=cur.posts.map(([w,x])=>`<div class="post"><small>${esc(w)}</small>${esc(x).replace(/\[\[(\w+)\|(.+?)\]\]/g,(m,id,t)=>`<mark data-b="${id}" class="${fixed.has(id)?'gone':enter?'sweep':''}" style="animation-delay:${enter?(.3+(n++)*.3):0}s">${t}</mark>`)}</div>`).join('')+`<p class="note">${esc(cur.summary||'')}</p>`;
+}
+function renderDossier(enter){
+ const rows=cur.base.map(([k,v])=>[k,v,null]).concat(cur.c.map(x=>[x.label,x.value,x.id]));
+ $('#dossier').innerHTML=rows.map(([k,v,id],i)=>{const off=id&&fixed.has(id);
+ return `<div class="row ${off?'off':''} ${enter?'enter':''} ${id&&off!==offPrev.has(id)?'flip':''}" ${id?`data-b="${id}" tabindex="0"`:''} style="animation-delay:${i*80}ms"><dt>${esc(k)}</dt><dd>${off?'Not found in public sources':esc(v)}</dd></div>`}).join('');offPrev=new Set(fixed);
+}
+function setScore(){
+ const to=score(),el=$('#num'),from=shown,t0=performance.now(),d=matchMedia('(prefers-reduced-motion:reduce)').matches?0:700;
+ const step=n=>{const k=d?Math.min(1,(n-t0)/d):1,e=1-Math.pow(1-k,3);shown=Math.round(from+(to-from)*e);el.textContent=shown;if(k<1)requestAnimationFrame(step)};
+ requestAnimationFrame(step);
+ const f=$('#fill');f.style.strokeDashoffset=100-to;$('#prg').textContent=`${fixed.size} of ${cur.c.length} removed.`;
+ const hi=to>60,mid=to>30;
+ f.style.stroke=hi?'var(--bad)':mid?'var(--mid)':'var(--good)';
+ const b=$('#band');b.textContent=hi?'High':mid?'Moderate':'Low';b.style.color=hi?'var(--bad)':mid?'var(--mid)':'var(--good)';
+}
+function renderGhost(){
+ $('#ghost').innerHTML=cur.c.map(x=>`<button class="sw" role="switch" aria-checked="${fixed.has(x.id)}" data-f="${x.id}"><span class="knob"></span><span><b>${esc(x.fix)}</b><span class="h">${esc(x.hint)}</span></span><span class="pts">−${x.w}</span></button>`).join('');
+}
+function renderAttack(){
+ const a=$('#attack');
+ if(tab==='mail'){
+  const m=cur.mail,ls=m.l.filter(([id])=>!id||!fixed.has(id)),used=ls.filter(([id])=>id).length,all=m.l.filter(([id])=>id).length;
+  a.innerHTML=`<div class="mail"><div class="mh">From: ${esc(m.from)}<br>To: ${esc(m.to)}<br>Subject: ${esc(m.subject)}</div><p>Hi,</p>${ls.map(([,t])=>`<p class="ln">${esc(t)}</p>`).join('')}<p>Thanks,<br>${esc(cur.name)}</p></div>
+  <p class="note">${used===0?'Nothing personal is left. This now reads as a generic message and is easy to doubt.':`Personalised with ${used} of ${all} public details. The sender address is a lookalike domain.`}</p>`;
+ }else if(tab==='qs'){
+  a.innerHTML=`<table><thead><tr><th>Recovery question</th><th>Attacker's answer</th><th>Result</th></tr></thead><tbody>${cur.c.map(x=>{const o=fixed.has(x.id);return `<tr><td>${esc(x.q)}</td><td>${o?'No public answer':esc(x.value)}</td><td><span class="chip ${o?'ok':''}">${o?'Blocked':'Bypassed'}</span></td></tr>`}).join('')}</tbody></table>`;
+ }else{
+  a.innerHTML=`<p>${esc(cur.voice)}</p><p class="note">A few minutes of clear audio is often enough to imitate a voice on a phone call. The toggles here do not cover audio and video, so remove or restrict those recordings separately and agree on a call-back code with your finance team.</p>`;
+ }
+}
+function renderDocs(){
+ const ex=cur.c.filter(x=>!fixed.has(x.id)),fx=cur.c.filter(x=>fixed.has(x.id));
+ $('#letter').textContent=`Subject: Request for erasure of personal data (GDPR Art. 17 / CCPA §1798.105)\n\nTo the data protection officer,\n\nI am ${cur.name}. Please delete the following personal data published about me and confirm within 30 days:\n\n${ex.length?ex.map(x=>`- ${x.label}: ${x.value}`).join('\n'):'- No exposed items remain.'}\n\nRegards,\n${cur.name}`;
+ $('#audit').textContent=JSON.stringify({subject:cur.name,date:new Date().toISOString().slice(0,10),riskBefore:total(),riskNow:score(),removed:fx.map(x=>x.label),stillExposed:ex.map(x=>x.label)},null,2);
+}
+function syncPosts(){$$('#posts [data-b]').forEach(el=>{el.classList.remove('sweep');el.classList.toggle('gone',fixed.has(el.dataset.b))})}
+function update(){syncPosts();renderDossier(false);renderGhost();renderAttack();renderDocs();setScore();
+ $('#msg').textContent=score()<=BASE?'Every detail is removed.':'';}
+function load(p){$('#empty').hidden=true;$('#top').hidden=false;$('#app').hidden=false;cur=p;fixed=new Set();shown=0;offPrev=new Set();renderPicker();renderPosts(true);renderDossier(true);renderGhost();renderAttack();renderDocs();setScore();$('#msg').textContent='';}
+
+document.addEventListener('click',e=>{
+ const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.p)load(P.find(p=>p.id===t.dataset.p));
+ else if(t.classList.contains('pin')){const k=t.dataset.b;fixed.has(k)?fixed.delete(k):fixed.add(k);update()}
+ else if(t.dataset.f){fixed.has(t.dataset.f)?fixed.delete(t.dataset.f):fixed.add(t.dataset.f);update()}
+ else if(t.dataset.t){tab=t.dataset.t;const ab=$$('#atabs .sg');ab.forEach(b=>b.setAttribute('aria-selected',b===t));$('#atabs').dataset.i=ab.indexOf(t);renderAttack();const a=$('#attack');a.classList.remove('fadein');void a.offsetWidth;a.classList.add('fadein')}
+ else if(t.id==='all'){cur.c.filter(x=>!fixed.has(x.id)).forEach((x,i)=>setTimeout(()=>{fixed.add(x.id);update()},i*260))}
+ else if(t.id==='reset'){fixed.clear();update()}
+ else if(t.id==='open'){$('#smsg').textContent='';$('#scan').showModal()}
+ else if(t.id==='cancel')$('#scan').close();
+ else if(t.id==='photo'){$('#drop').hidden=false;$('#prog').hidden=true;$('#pmsg').textContent='';$('#pdlg').showModal()}
+ else if(t.id==='pcancel')$('#pdlg').close();
+ else if(t.id==='go')scan();
+ else if(t.dataset.copy){const s=$('#'+t.dataset.copy).textContent;
+  const ok=()=>{$('#msg').textContent='Copied.'};
+  (navigator.clipboard?navigator.clipboard.writeText(s):Promise.reject()).then(ok).catch(()=>{const r=document.createRange();r.selectNodeContents($('#'+t.dataset.copy));const se=getSelection();se.removeAllRanges();se.addRange(r);$('#msg').textContent='Text selected. Press copy on your keyboard.'})}
+});
+const hl=(e,on)=>{const b=e.target.closest&&e.target.closest('[data-b]');if(b)$$(`[data-b="${b.dataset.b}"]`).forEach(x=>x.classList.toggle('hl',on))};
+document.addEventListener('mouseover',e=>hl(e,true));document.addEventListener('mouseout',e=>hl(e,false));
+document.addEventListener('focusin',e=>hl(e,true));document.addEventListener('focusout',e=>hl(e,false));
+
+const RX=[
+ ['Personal email','Which email can reset your password?',/[\w.+-]+@[\w-]+\.[\w.]+/g,0],
+ ['Phone number','Which number gets your codes?',/\+?\d[\d\s().-]{8,}\d/g,0],
+ ['First pet','Name of your first pet?',/(?:my|our) (?:dog|cat|puppy|kitten|pup),? (?:named |called )?([A-Z][a-z]+)/gd,1],
+ ['Birthday','What is your birth date?',/turn(?:s|ing)? \d+|\d+ days (?:till|until)[^.!\n]{0,25}/gi,0],
+ ['School','What school did you attend?',/[A-Z][\w']+(?: [A-Z][\w']+)* (?:High|Elementary|Academy|University)(?: School)?/g,0],
+ ['Travel plans','Is the account holder travelling?',/(?:flying out|out of office|away|back on|travelling|traveling)[^.!\n]{0,40}/gi,0],
+ ['Employer','Who is your employer?',/(?:work(?:ing)? (?:at|for)|joined) ([A-Z][\w&]+(?: [A-Z][\w&]+)?)/gd,1]
+];
+const WT={1:6,2:14,3:25};
+const norm=c=>{const t=c.reduce((a,x)=>a+x.w,0);if(t>100)c.forEach(x=>x.w=Math.round(x.w*100/t));return c};
+async function aiJSON(prompt,blobs){const sm=window.claude&&await claude.use('sample');if(!sm)return null;const o={cache:false,modelTier:'complex'};if(blobs){if(!(await sm.limits()).images)return null;o.images=blobs}const r=await sm(prompt,o);return JSON.parse(r.text.replace(/```json|```/g,'').trim())}
+const TPROMPT=t=>`You are a careful privacy auditor. Read the text below, which someone plans to post online. Find details an attacker could use for social engineering, guessing account-recovery answers, stalking, fraud or impersonation: full names, employer and role, school, hometown, birth dates or ages, pet names, family members' names, phone numbers, emails, usernames and payment handles, travel dates, live location, routines, workplace details, financial hints. Report only details that are explicitly written in the text. Copy "quote" exactly, character for character, as short as possible. Reply with JSON only, no markdown: {"summary":"one or two plain sentences","findings":[{"quote":"exact text","label":"short name","severity":1,"confidence":0.9,"q":"recovery question it helps answer","pretext":"one sentence an attacker could write using it, in the first person as the author","fix":"short action","hint":"why it matters, under 12 words"}]}. severity is 1 to 3. confidence is 0 to 1. At most 8 findings. If nothing risky is present, return an empty findings list.\n\nTEXT:\n"""${t}"""`;
+async function scan(){
+ const txt=$('#paste').value.trim(),sm=$('#smsg');if(!txt){sm.textContent='Paste some text first.';return}
+ $('#go').disabled=true;sm.textContent='Reading your text.';
+ let hits=[],summary='',ai=false;
+ try{const j=await aiJSON(TPROMPT(txt));
+  if(j){ai=true;summary=j.summary||'';
+   (j.findings||[]).filter(x=>(+x.confidence||0)>=.5&&x.quote).forEach(x=>{const q=String(x.quote);let i=txt.indexOf(q);if(i<0)i=txt.toLowerCase().indexOf(q.toLowerCase());
+    if(i>=0)hits.push({s:i,e:i+q.length,label:x.label,q:x.q,pretext:x.pretext,fix:x.fix,hint:x.hint,sev:Math.min(3,Math.max(1,Math.round(+x.severity)||1))})})}}catch(e){}
+ if(!ai){RX.forEach(([label,q,re,g])=>{for(const m of txt.matchAll(re))hits.push({s:g?m.indices[1][0]:m.index,e:g?m.indices[1][1]:m.index+m[0].length,label,q,fix:`Remove ${label.toLowerCase()}`,hint:'Found by pattern matching.',sev:2})});
+  summary='Claude was not available, so this used simple pattern matching. It can miss details or flag the wrong ones.'}
+ hits.sort((a,b)=>a.s-b.s);const k=[];hits.forEach(h=>{if(!k.length||h.s>=k[k.length-1].e)k.push(h)});
+ $('#go').disabled=false;
+ if(!k.length){sm.textContent='No exposed details found in this text.';return}
+ let out='',i=0;k.forEach((h,n)=>{h.id='s'+n;h.value=txt.slice(h.s,h.e).replace(/\s+/g,' ');out+=txt.slice(i,h.s).replace(/\[\[/g,'')+`[[${h.id}|${h.value}]]`;i=h.e});out+=txt.slice(i).replace(/\[\[/g,'');
+ const c=norm(k.map(h=>({id:h.id,label:h.label||'Detail',value:h.value,q:h.q||'What could this reveal?',fix:h.fix||'Remove this detail',hint:h.hint||'',w:WT[h.sev],pretext:h.pretext})));
+ const p={id:'custom',name:'Your text',summary,base:[['Source','Pasted text']],posts:[['Pasted just now',out]],c,
+  mail:{from:'sender@lookalike-domain.com',to:'Someone who trusts you',subject:'Quick request',l:c.map(x=>[x.id,x.pretext||`I'm referencing your ${x.label.toLowerCase()}.`]).concat([[null,'Please act on the attached request today.']])},
+  voice:'Add any public audio or video of you to this check by hand.'};
+ const ix=P.findIndex(x=>x.id==='custom');ix>-1?P[ix]=p:P.push(p);
+ $('#scan').close();load(p);
+}
+function renderPhoto(){
+ $('#l1').textContent='What the photo gives away';
+ const pins=cur.c.filter(x=>x.box).map((x,i)=>{const [a,b,w,h]=x.box;return `<button class="pin ${fixed.has(x.id)?'gone':''}" data-b="${x.id}" style="left:${a*100}%;top:${b*100}%;width:${w*100}%;height:${h*100}%;animation-delay:${.3+i*.15}s" aria-label="${esc(x.label)}"><i>${i+1}</i></button>`}).join('');
+ const meta=cur.c.filter(x=>!x.box).map(x=>`<div class="post"><small>${esc(x.label)}</small><mark data-b="${x.id}" class="${fixed.has(x.id)?'gone':''}">${esc(x.value)}</mark></div>`).join('');
+ $('#posts').innerHTML=`<figure class="shot"><img src="${cur.img}" alt="Your uploaded photo"><div class="pins">${pins}</div></figure>${meta}<p class="note">${esc(cur.summary||'')}</p>`;
+}
+function exif(buf){const v=new DataView(buf),out={};try{
+ if(v.getUint16(0)!==0xFFD8)return out;let o=2;
+ while(o<v.byteLength-4){const m=v.getUint16(o);if(m===0xFFE1){const s=o+4;if(v.getUint32(s)!==0x45786966)break;const t=s+6,le=v.getUint16(t)===0x4949,g16=q=>v.getUint16(q,le),g32=q=>v.getUint32(q,le);
+  const str=(q,n)=>{let r='';for(let i=0;i<n;i++){const c=v.getUint8(q+i);if(!c)break;r+=String.fromCharCode(c)}return r.trim()};
+  const rat=q=>g32(q)/(g32(q+4)||1);
+  const ifd=(q,fn)=>{const n=g16(q);for(let i=0;i<n;i++){const e=q+2+i*12,tag=g16(e),typ=g16(e+2),cnt=g32(e+4),sz=({1:1,2:1,3:2,4:4,5:8}[typ]||1)*cnt;fn(tag,cnt,sz>4?t+g32(e+8):e+8,e+8)}};
+  let xp=0,gp=0;
+  ifd(t+g32(t+4),(tag,cnt,vp,vo)=>{if(tag===0x010F)out.make=str(vp,cnt);if(tag===0x0110)out.model=str(vp,cnt);if(tag===0x8769)xp=t+g32(vo);if(tag===0x8825)gp=t+g32(vo)});
+  if(xp)ifd(xp,(tag,cnt,vp)=>{if(tag===0x9003)out.date=str(vp,cnt);if(tag===0xA431)out.serial=str(vp,cnt)});
+  if(gp){const G={};ifd(gp,(tag,cnt,vp,vo)=>{if(tag===1||tag===3)G[tag]=str(vo,2);if(tag===2||tag===4)G[tag]=[rat(vp),rat(vp+8),rat(vp+16)]});
+   if(G[2]&&G[4]){const d=a=>a[0]+a[1]/60+a[2]/3600;out.lat=(G[1]==='S'?-1:1)*d(G[2]);out.lon=(G[3]==='W'?-1:1)*d(G[4])}}
+  break}
+  o+=2+v.getUint16(o+2)}}catch(e){}return out}
+const PROMPT=`You are a careful privacy auditor. Look at this photo someone plans to post online. Report only details that are clearly visible and legible. Never guess, never infer a name or place that is not shown, and do not identify people from their faces. Look for: readable text (names, badges, lanyards, documents, screens, envelopes, plates, street signs, shop names), uniforms and logos that show an employer or school, landmarks or backgrounds that show a home, workplace or routine, other people or children in frame, valuables, reflections, and visible pet names. For text, "value" must be the exact text as printed. Each "box" must be tight around the item, as fractions 0 to 1 of the image: [left edge x, top edge y, width, height]. Reply with JSON only, no markdown: {"summary":"one or two plain sentences","findings":[{"label":"short name","value":"what is visible","severity":1,"confidence":0.9,"box":[0.1,0.2,0.3,0.1],"q":"recovery question or question it helps answer","pretext":"one sentence an attacker could write using it, in the first person as the photo's owner","fix":"short action such as Blur the badge","hint":"why it matters, under 12 words"}]}. severity is 1 to 3. confidence is 0 to 1. Use box null only for things with no clear spot. At most 6 findings. If nothing risky is visible, return an empty findings list.`;
+const VPROMPT=l=>`You are checking claims about cropped regions of a photo. Each attached image is one crop, in the same order as this list. For each, say whether the claimed item is clearly visible and legible in that crop. Do not guess.\n${l.map((x,i)=>`${i+1}. ${x.label}: ${x.value}`).join('\n')}\nReply with JSON only, no markdown: {"results":[{"n":1,"visible":true,"value":"exact text or description as seen","severity":1}]}. severity is 1 to 3.`;
+function crop(bmp,b){const px=b[2]*.15,py=b[3]*.15,x=Math.max(0,b[0]-px),y=Math.max(0,b[1]-py),w=Math.min(1-x,b[2]+2*px),h=Math.min(1-y,b[3]+2*py),sw=w*bmp.width,sh=h*bmp.height,k=Math.min(1,1024/Math.max(sw,sh)),c=document.createElement('canvas');c.width=Math.max(8,Math.round(sw*k));c.height=Math.max(8,Math.round(sh*k));c.getContext('2d').drawImage(bmp,x*bmp.width,y*bmp.height,sw,sh,0,0,c.width,c.height);return new Promise(r=>c.toBlob(r,'image/jpeg',.9))}
+async function scanPhoto(file){
+ if(!file||!file.type.startsWith('image/'))return;
+ const msg=$('#pmsg');$('#drop').hidden=true;$('#prog').hidden=false;
+ try{
+  msg.textContent='Reading hidden file data.';
+  const m=exif(await file.arrayBuffer()),bmp=await createImageBitmap(file),sc=Math.min(1,1280/Math.max(bmp.width,bmp.height)),cv=document.createElement('canvas');
+  cv.width=Math.round(bmp.width*sc);cv.height=Math.round(bmp.height*sc);cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);
+  const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.85)),url=cv.toDataURL('image/jpeg',.85);
+  const f=[];let summary='';
+  if(m.lat!=null)f.push({label:'Exact location in the file',value:`${m.lat.toFixed(5)}, ${m.lon.toFixed(5)}`,sev:3,q:'Where do you live or work?',pretext:`I took this at ${m.lat.toFixed(3)}, ${m.lon.toFixed(3)}, so you know it's really me.`,fix:'Strip location data',hint:'GPS coordinates sit inside the file.'});
+  const dev=[m.make,m.model].filter(Boolean).join(' ');
+  if(dev)f.push({label:'Camera or phone',value:dev+(m.serial?`, serial ${m.serial}`:''),sev:1,q:'Which device do you use?',pretext:`Sent from my ${dev}.`,fix:'Strip device details',hint:'Helps an attacker fake your device.'});
+  if(m.date)f.push({label:'Time it was taken',value:m.date,sev:1,q:'What were you doing then?',pretext:`I took this photo on ${m.date.slice(0,10).replace(/:/g,'-')}.`,fix:'Strip date and time',hint:'Reveals your routine.'});
+  msg.textContent='Looking for details in the picture.';
+  let ok=false,dropped=0;
+  try{const j=await aiJSON(PROMPT,[blob]);
+   if(j){ok=true;summary=j.summary||'';
+    const a=(j.findings||[]).filter(x=>(+x.confidence||0)>=.5).slice(0,6).map(x=>({label:x.label,value:x.value,sev:Math.min(3,Math.max(1,Math.round(+x.severity)||1)),box:Array.isArray(x.box)&&x.box.length===4?x.box.map(n=>Math.min(1,Math.max(0,+n||0))):null,q:x.q,pretext:x.pretext,fix:x.fix,hint:x.hint,ver:false}));
+    const bx=a.filter(x=>x.box&&x.box[2]>.01&&x.box[3]>.01);
+    if(bx.length){msg.textContent='Double-checking each finding up close.';
+     try{const v=await aiJSON(VPROMPT(bx),await Promise.all(bx.map(x=>crop(bmp,x.box))));
+      ((v&&v.results)||[]).forEach(r=>{const x=bx[r.n-1];if(!x)return;if(r.visible===false)x.drop=true;else{x.ver=true;if(r.value)x.value=r.value;if(r.severity)x.sev=Math.min(3,Math.max(1,Math.round(+r.severity)||x.sev))}})}catch(e){}}
+    dropped=a.filter(x=>x.drop).length;a.filter(x=>!x.drop).forEach(x=>f.push(x))}}catch(e){}
+  if(!ok)summary='The picture itself could not be analysed here, so only the hidden file data was checked.';
+  else{if(dropped)summary+=` ${dropped} possible finding${dropped>1?'s were':' was'} dropped because it could not be confirmed on a close look.`;if(!f.length)summary+=' Nothing risky was found.'}
+  const c=norm(f.map((x,i)=>({id:'p'+i,label:x.label||'Detail',value:(x.value||'')+(x.ver===false?' (not double-checked)':''),q:x.q||'What could this reveal?',fix:x.fix||'Remove this detail',hint:x.hint||'',w:WT[x.sev],box:x.box,pretext:x.pretext})));
+  const p={id:'photo',name:'Your photo',img:url,summary,base:[['Source','Uploaded photo']],posts:[],c,
+   mail:{from:'sender@lookalike-domain.com',to:'Someone who trusts you',subject:'Quick favour',l:c.map(x=>[x.id,x.pretext||`I'm referencing ${x.label.toLowerCase()}.`]).concat([[null,'Can you send me the code you just received?']])},
+   voice:'A photo carries no audio. Add any public video of you to this check by hand.'};
+  const ix=P.findIndex(x=>x.id==='photo');ix>-1?P[ix]=p:P.push(p);
+  $('#pdlg').close();load(p);
+ }catch(e){msg.textContent='That image could not be read. Try a JPEG or PNG.';$('#prog').hidden=true;$('#drop').hidden=false}
+}
+$('#file').addEventListener('change',e=>{scanPhoto(e.target.files[0]);e.target.value=''});
+const dz=$('#drop');['dragover','dragenter'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.classList.add('over')}));
+['dragleave','drop'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.classList.remove('over');if(v==='drop')scanPhoto(e.dataTransfer.files[0])}));
+renderPicker();
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+$$('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
